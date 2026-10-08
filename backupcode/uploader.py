@@ -89,11 +89,7 @@ def use_ocr(filepath):
     confidence_intervals = []
 
     for item in parsed_lineitems:
-        quantity = item.get("Quantity")
-
-        if quantity is None:
-            quantity = -1
-
+        
         rate = item.get("Rate")
 
         # A missing OCR value must still be numeric for the
@@ -105,6 +101,15 @@ def use_ocr(filepath):
 
         if amount is None:
             amount = 0.0
+
+        quantity = item.get("Quantity")
+        
+        if quantity is None:
+            if amount > 0 and rate > 0:
+                quantity = amount / rate
+            else:
+                quantity = -1
+
 
         new_item = InvoiceLineItemCreate(
             InvoiceNumber=invoice_number,
